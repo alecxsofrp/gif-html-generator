@@ -3,109 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GIF Uploader & HTML Generator</title>
+    <title>Advanced GIF HTML Generator</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
+        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
         }
-
+        
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             background: white;
-            border-radius: 15px;
+            border-radius: 20px;
             padding: 30px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
         }
-
+        
         h1 {
             text-align: center;
             color: #333;
             margin-bottom: 30px;
             font-size: 2.5em;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            font-weight: 700;
         }
-
-        .upload-section {
-            margin-bottom: 30px;
-        }
-
-        .naming-options {
+        
+        .tabs {
             display: flex;
-            gap: 20px;
-            margin-bottom: 20px;
-            align-items: center;
-            flex-wrap: wrap;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e2e8f0;
         }
-
-        .naming-options label {
-            font-weight: bold;
-            color: #555;
-        }
-
-        .naming-options input[type="text"] {
-            padding: 10px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
+        
+        .tab {
+            padding: 15px 30px;
+            background: none;
+            border: none;
             font-size: 16px;
-            min-width: 200px;
-        }
-
-        .naming-options input[type="text"]:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .upload-area {
-            border: 3px dashed #667eea;
-            border-radius: 15px;
-            padding: 40px;
-            text-align: center;
-            background: #f8f9ff;
-            transition: all 0.3s ease;
             cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            color: #666;
         }
-
-        .upload-area:hover {
-            background: #f0f2ff;
-            border-color: #764ba2;
-        }
-
-        .upload-area.dragover {
-            background: #e8ebff;
-            border-color: #667eea;
-            transform: scale(1.02);
-        }
-
-        .upload-icon {
-            font-size: 48px;
-            margin-bottom: 20px;
+        
+        .tab.active {
             color: #667eea;
+            border-bottom-color: #667eea;
+            font-weight: 600;
         }
-
+        
+        .tab:hover {
+            background: #f8f9fa;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .upload-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 2px dashed #dee2e6;
+            transition: all 0.3s ease;
+        }
+        
+        .upload-section:hover {
+            border-color: #667eea;
+            background: #f0f2ff;
+        }
+        
+        .upload-zone {
+            text-align: center;
+            cursor: pointer;
+            padding: 20px;
+        }
+        
+        .upload-icon {
+            font-size: 3em;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
         .upload-text {
-            font-size: 18px;
+            font-size: 1.2em;
             color: #666;
             margin-bottom: 15px;
         }
-
+        
         .file-input {
             display: none;
         }
-
-        .upload-btn {
+        
+        .btn {
             background: linear-gradient(45deg, #667eea, #764ba2);
             color: white;
             border: none;
@@ -113,325 +114,443 @@
             border-radius: 25px;
             font-size: 16px;
             cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-
-        .upload-btn:hover {
-            transform: translateY(-2px);
-        }
-
-        .preview-section {
-            margin-bottom: 30px;
-        }
-
-        .preview-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .preview-item {
-            background: #f8f9ff;
-            border-radius: 10px;
-            padding: 15px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-        }
-
-        .preview-item:hover {
-            transform: translateY(-5px);
-        }
-
-        .preview-item img {
-            max-width: 100%;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-
-        .preview-item .filename {
-            font-size: 14px;
-            color: #666;
-            word-break: break-all;
-        }
-
-        .remove-btn {
-            background: #ff4757;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 10px;
-            font-size: 12px;
-        }
-
-        .remove-btn:hover {
-            background: #ff3742;
-        }
-
-        .generate-section {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .generate-btn {
-            background: linear-gradient(45deg, #5f27cd, #00d2d3);
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            border-radius: 30px;
-            font-size: 18px;
-            cursor: pointer;
             transition: all 0.3s ease;
-            font-weight: bold;
+            margin: 5px;
         }
-
-        .generate-btn:hover {
+        
+        .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
-
-        .generate-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
+        
+        .btn-secondary {
+            background: linear-gradient(45deg, #48bb78, #38a169);
         }
-
-        .output-section {
-            margin-top: 30px;
+        
+        .btn-danger {
+            background: linear-gradient(45deg, #e53e3e, #c53030);
         }
-
-        .output-textarea {
+        
+        .html-input {
             width: 100%;
-            height: 300px;
-            border: 2px solid #ddd;
-            border-radius: 10px;
+            min-height: 200px;
             padding: 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
             font-family: 'Courier New', monospace;
             font-size: 14px;
+            line-height: 1.6;
             resize: vertical;
-            background: #f8f9ff;
+            margin-bottom: 20px;
         }
-
-        .output-textarea:focus {
+        
+        .html-input:focus {
             outline: none;
             border-color: #667eea;
         }
-
-        .copy-btn {
-            background: #2ed573;
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .input-group label {
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .control-input {
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            min-width: 200px;
+        }
+        
+        .control-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #667eea;
+        }
+        
+        .gif-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .gif-item {
+            position: relative;
+            background: #f8f9fa;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .gif-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .gif-item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+        
+        .gif-info {
+            padding: 15px;
+        }
+        
+        .gif-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        
+        .gif-size {
+            color: #666;
+            font-size: 12px;
+        }
+        
+        .remove-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 0, 0, 0.8);
             color: white;
             border: none;
-            padding: 10px 25px;
-            border-radius: 20px;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
             cursor: pointer;
-            margin-top: 15px;
-            font-size: 16px;
-            transition: all 0.3s ease;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-
-        .copy-btn:hover {
-            background: #1dd1a1;
-            transform: translateY(-2px);
+        
+        .remove-btn:hover {
+            background: rgba(255, 0, 0, 1);
         }
-
+        
+        .html-output {
+            background: #2d3748;
+            color: #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #4a5568;
+        }
+        
+        .section-title {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
         .stats {
             display: flex;
-            justify-content: space-around;
-            margin: 20px 0;
+            gap: 20px;
+            margin-bottom: 20px;
             flex-wrap: wrap;
         }
-
+        
         .stat-item {
-            text-align: center;
+            background: #f8f9fa;
             padding: 15px;
-            background: #f8f9ff;
             border-radius: 10px;
+            text-align: center;
             min-width: 120px;
-            margin: 5px;
         }
-
+        
         .stat-number {
-            font-size: 24px;
-            font-weight: bold;
+            font-size: 1.5em;
+            font-weight: 700;
             color: #667eea;
         }
-
+        
         .stat-label {
-            font-size: 14px;
             color: #666;
+            font-size: 0.9em;
         }
-
-        .clear-btn {
-            background: #ff4757;
-            color: white;
-            border: none;
-            padding: 8px 20px;
+        
+        .preview-section {
+            background: #f8f9fa;
             border-radius: 15px;
-            cursor: pointer;
-            font-size: 14px;
-            float: right;
-            margin-top: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
         }
-
-        .clear-btn:hover {
-            background: #ff3742;
+        
+        .preview-title {
+            font-size: 1.2em;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 600;
         }
-
-        @media (max-width: 768px) {
-            .naming-options {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .naming-options input[type="text"] {
-                width: 100%;
-            }
-            
-            .stats {
-                flex-direction: column;
-            }
+        
+        .preview-content {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.4;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎬 GIF Uploader & HTML Generator</h1>
+        <h1>🎬 Advanced GIF HTML Generator</h1>
         
-        <div class="upload-section">
-            <div class="naming-options">
-                <label for="namePrefix">File Name Prefix:</label>
-                <input type="text" id="namePrefix" placeholder="alexcsofrpgifs" value="alexcsofrpgifs">
-            </div>
-            
-            <div class="upload-area" id="uploadArea">
-                <div class="upload-icon">📁</div>
-                <div class="upload-text">Drag & drop your GIF files here</div>
-                <div class="upload-text">or</div>
-                <button class="upload-btn" onclick="document.getElementById('fileInput').click()">Choose Files</button>
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('upload')">📁 Upload GIFs</button>
+            <button class="tab" onclick="switchTab('html')">💻 Process HTML</button>
+        </div>
+        
+        <!-- Upload GIFs Tab -->
+        <div class="tab-content active" id="upload-tab">
+            <div class="upload-section">
+                <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
+                    <div class="upload-icon">📁</div>
+                    <div class="upload-text">Click to upload GIF files or drag and drop</div>
+                    <button class="btn">Select GIF Files</button>
+                </div>
                 <input type="file" id="fileInput" class="file-input" multiple accept=".gif,image/gif">
             </div>
-        </div>
-
-        <div class="stats">
-            <div class="stat-item">
-                <div class="stat-number" id="totalFiles">0</div>
-                <div class="stat-label">Total GIFs</div>
+            
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="fileCount">0</div>
+                    <div class="stat-label">GIFs Uploaded</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="totalSize">0 KB</div>
+                    <div class="stat-label">Total Size</div>
+                </div>
             </div>
-            <div class="stat-item">
-                <div class="stat-number" id="totalSize">0 KB</div>
-                <div class="stat-label">Total Size</div>
+            
+            <div class="controls">
+                <div class="input-group">
+                    <label>Default Alt Text</label>
+                    <input type="text" id="altTextInput" class="control-input" placeholder="Enter default alt text">
+                </div>
+                <div class="input-group">
+                    <label>URL Prefix</label>
+                    <input type="text" id="prefixInput" class="control-input" placeholder="e.g., https://example.com/gifs/">
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="lazyLoadCheck" checked>
+                    <label for="lazyLoadCheck">Add lazy loading</label>
+                </div>
+                <button class="btn" onclick="generateHTML()">Generate HTML</button>
+                <button class="btn btn-danger" onclick="clearAll()">Clear All</button>
+            </div>
+            
+            <div class="gif-grid" id="gifGrid"></div>
+        </div>
+        
+        <!-- Process HTML Tab -->
+        <div class="tab-content" id="html-tab">
+            <div class="upload-section">
+                <div class="upload-zone" onclick="document.getElementById('htmlFileInput').click()">
+                    <div class="upload-icon">📄</div>
+                    <div class="upload-text">Click to upload HTML files or drag and drop</div>
+                    <button class="btn">Select HTML Files</button>
+                </div>
+                <input type="file" id="htmlFileInput" class="file-input" multiple accept=".html,.htm">
+            </div>
+            
+            <div class="section-title">📝 Paste or Edit HTML Code</div>
+            <textarea id="htmlInput" class="html-input" placeholder="Paste your HTML code here or upload HTML files above..."></textarea>
+            
+            <div class="controls">
+                <div class="input-group">
+                    <label>New URL Prefix</label>
+                    <input type="text" id="newPrefixInput" class="control-input" placeholder="e.g., https://cdn.example.com/gifs/">
+                </div>
+                <div class="input-group">
+                    <label>Default Alt Text (if missing)</label>
+                    <input type="text" id="defaultAltInput" class="control-input" placeholder="GIF image">
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="addLazyLoadCheck" checked>
+                    <label for="addLazyLoadCheck">Add lazy loading</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="replacePathCheck">
+                    <label for="replacePathCheck">Replace existing paths</label>
+                </div>
+                <button class="btn btn-secondary" onclick="processExistingHTML()">Process HTML</button>
+                <button class="btn btn-danger" onclick="clearHTML()">Clear</button>
+            </div>
+            
+            <div class="preview-section" id="previewSection" style="display: none;">
+                <div class="preview-title">🔍 Found GIF Images Preview</div>
+                <div class="preview-content" id="previewContent"></div>
             </div>
         </div>
-
-        <div class="preview-section">
-            <div class="preview-grid" id="previewGrid"></div>
-            <button class="clear-btn" onclick="clearAll()" style="display: none;" id="clearBtn">Clear All</button>
-        </div>
-
-        <div class="generate-section">
-            <button class="generate-btn" onclick="generateHTML()" id="generateBtn" disabled>Generate HTML Code</button>
-        </div>
-
-        <div class="output-section" id="outputSection" style="display: none;">
-            <h3>Generated HTML Code:</h3>
-            <textarea class="output-textarea" id="outputTextarea" readonly></textarea>
-            <button class="copy-btn" onclick="copyToClipboard()">Copy to Clipboard</button>
+        
+        <div class="html-output-section">
+            <h2 class="section-title">💻 Generated HTML Code</h2>
+            <div class="html-output" id="htmlOutput">Upload GIFs or paste HTML code to generate output...</div>
+            <button class="btn btn-secondary" onclick="copyToClipboard()">Copy HTML Code</button>
         </div>
     </div>
 
     <script>
-        let uploadedFiles = [];
-        let fileCounter = 1;
+        let uploadedGifs = [];
+        let totalSize = 0;
+        let processedHTML = '';
 
-        const uploadArea = document.getElementById('uploadArea');
-        const fileInput = document.getElementById('fileInput');
-        const previewGrid = document.getElementById('previewGrid');
-        const generateBtn = document.getElementById('generateBtn');
-        const clearBtn = document.getElementById('clearBtn');
-        const outputSection = document.getElementById('outputSection');
-        const outputTextarea = document.getElementById('outputTextarea');
+        // Tab switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            document.querySelector(`[onclick="switchTab('${tabName}')"]`).classList.add('active');
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+        }
 
-        // Drag and drop functionality
-        uploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadArea.classList.add('dragover');
+        // File input events
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            handleGifFiles(e.target.files);
         });
 
-        uploadArea.addEventListener('dragleave', (e) => {
-            e.preventDefault();
-            uploadArea.classList.remove('dragover');
+        document.getElementById('htmlFileInput').addEventListener('change', function(e) {
+            handleHTMLFiles(e.target.files);
         });
 
-        uploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadArea.classList.remove('dragover');
-            const files = Array.from(e.dataTransfer.files).filter(file => file.type === 'image/gif');
-            handleFiles(files);
-        });
+        // Drag and drop for GIF upload
+        const uploadZone = document.querySelector('.upload-zone');
+        setupDragDrop(uploadZone, handleGifFiles);
 
-        fileInput.addEventListener('change', (e) => {
-            const files = Array.from(e.target.files);
-            handleFiles(files);
-        });
+        // Drag and drop for HTML upload
+        const htmlUploadZone = document.querySelectorAll('.upload-zone')[1];
+        setupDragDrop(htmlUploadZone, handleHTMLFiles);
 
-        function handleFiles(files) {
-            files.forEach(file => {
+        function setupDragDrop(zone, handler) {
+            zone.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                zone.style.backgroundColor = '#f0f2ff';
+            });
+            
+            zone.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                zone.style.backgroundColor = '#f8f9fa';
+            });
+            
+            zone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                zone.style.backgroundColor = '#f8f9fa';
+                handler(e.dataTransfer.files);
+            });
+        }
+
+        function handleGifFiles(files) {
+            Array.from(files).forEach(file => {
                 if (file.type === 'image/gif') {
-                    const fileObj = {
-                        file: file,
-                        id: Date.now() + Math.random(),
-                        originalName: file.name,
-                        newName: generateFileName(),
-                        url: URL.createObjectURL(file)
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const gifData = {
+                            id: Date.now() + Math.random(),
+                            name: file.name,
+                            size: file.size,
+                            dataUrl: e.target.result,
+                            altText: file.name.replace('.gif', '').replace(/[_-]/g, ' ')
+                        };
+                        uploadedGifs.push(gifData);
+                        totalSize += file.size;
+                        updateGifDisplay();
                     };
-                    uploadedFiles.push(fileObj);
-                    addPreview(fileObj);
+                    reader.readAsDataURL(file);
+                } else {
+                    alert('Please upload only GIF files!');
                 }
             });
-            updateStats();
-            updateButtons();
         }
 
-        function generateFileName() {
-            const prefix = document.getElementById('namePrefix').value || 'alexcsofrpgifs';
-            return `${prefix}${fileCounter++}`;
-        }
-
-        function addPreview(fileObj) {
-            const previewItem = document.createElement('div');
-            previewItem.className = 'preview-item';
-            previewItem.innerHTML = `
-                <img src="${fileObj.url}" alt="${fileObj.newName}">
-                <div class="filename">${fileObj.newName}.gif</div>
-                <button class="remove-btn" onclick="removeFile('${fileObj.id}')">Remove</button>
-            `;
-            previewGrid.appendChild(previewItem);
-        }
-
-        function removeFile(id) {
-            uploadedFiles = uploadedFiles.filter(file => file.id !== id);
-            updatePreview();
-            updateStats();
-            updateButtons();
-        }
-
-        function updatePreview() {
-            previewGrid.innerHTML = '';
-            uploadedFiles.forEach(fileObj => {
-                addPreview(fileObj);
+        function handleHTMLFiles(files) {
+            Array.from(files).forEach(file => {
+                if (file.type === 'text/html' || file.name.endsWith('.html') || file.name.endsWith('.htm')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const currentContent = document.getElementById('htmlInput').value;
+                        const newContent = currentContent + '\n' + e.target.result;
+                        document.getElementById('htmlInput').value = newContent;
+                        previewHTMLContent(newContent);
+                    };
+                    reader.readAsText(file);
+                } else {
+                    alert('Please upload only HTML files!');
+                }
             });
+        }
+
+        function updateGifDisplay() {
+            updateStats();
+            updateGifGrid();
+            generateHTML();
         }
 
         function updateStats() {
-            const totalFiles = uploadedFiles.length;
-            const totalSize = uploadedFiles.reduce((sum, file) => sum + file.file.size, 0);
-            
-            document.getElementById('totalFiles').textContent = totalFiles;
+            document.getElementById('fileCount').textContent = uploadedGifs.length;
             document.getElementById('totalSize').textContent = formatFileSize(totalSize);
         }
 
@@ -440,57 +559,189 @@
             const k = 1024;
             const sizes = ['Bytes', 'KB', 'MB', 'GB'];
             const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
         }
 
-        function updateButtons() {
-            generateBtn.disabled = uploadedFiles.length === 0;
-            clearBtn.style.display = uploadedFiles.length > 0 ? 'block' : 'none';
+        function updateGifGrid() {
+            const grid = document.getElementById('gifGrid');
+            grid.innerHTML = '';
+            
+            uploadedGifs.forEach(gif => {
+                const gifItem = document.createElement('div');
+                gifItem.className = 'gif-item';
+                gifItem.innerHTML = `
+                    <img src="${gif.dataUrl}" alt="${gif.altText}" loading="lazy">
+                    <button class="remove-btn" onclick="removeGif('${gif.id}')">×</button>
+                    <div class="gif-info">
+                        <div class="gif-name">${gif.name}</div>
+                        <div class="gif-size">${formatFileSize(gif.size)}</div>
+                    </div>
+                `;
+                grid.appendChild(gifItem);
+            });
+        }
+
+        function removeGif(id) {
+            const index = uploadedGifs.findIndex(gif => gif.id == id);
+            if (index > -1) {
+                totalSize -= uploadedGifs[index].size;
+                uploadedGifs.splice(index, 1);
+                updateGifDisplay();
+            }
         }
 
         function clearAll() {
-            uploadedFiles.forEach(file => {
-                URL.revokeObjectURL(file.url);
-            });
-            uploadedFiles = [];
-            fileCounter = 1;
-            previewGrid.innerHTML = '';
-            outputSection.style.display = 'none';
-            updateStats();
-            updateButtons();
+            uploadedGifs = [];
+            totalSize = 0;
+            updateGifDisplay();
+            document.getElementById('htmlOutput').textContent = 'Upload GIFs or paste HTML code to generate output...';
+        }
+
+        function clearHTML() {
+            document.getElementById('htmlInput').value = '';
+            document.getElementById('previewSection').style.display = 'none';
+            document.getElementById('htmlOutput').textContent = 'Upload GIFs or paste HTML code to generate output...';
         }
 
         function generateHTML() {
-            if (uploadedFiles.length === 0) return;
+            if (uploadedGifs.length === 0) {
+                document.getElementById('htmlOutput').textContent = 'Upload GIFs or paste HTML code to generate output...';
+                return;
+            }
 
+            const defaultAltText = document.getElementById('altTextInput').value || 'GIF image';
+            const prefix = document.getElementById('prefixInput').value || '';
+            const addLazyLoad = document.getElementById('lazyLoadCheck').checked;
+            
             let htmlCode = '';
-            uploadedFiles.forEach(fileObj => {
-                htmlCode += `<img src="${fileObj.newName}.gif" alt="${fileObj.newName}" loading="lazy">\n`;
+            uploadedGifs.forEach(gif => {
+                const altText = gif.altText || defaultAltText;
+                const srcUrl = prefix + gif.name;
+                const lazyAttr = addLazyLoad ? ' loading="lazy"' : '';
+                htmlCode += `<img src="${srcUrl}" alt="${altText}"${lazyAttr}>\n`;
             });
 
-            outputTextarea.value = htmlCode;
-            outputSection.style.display = 'block';
-            outputSection.scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('htmlOutput').textContent = htmlCode;
+        }
+
+        function previewHTMLContent(htmlContent) {
+            const gifRegex = /<img[^>]*src=['"](.*\.gif)['"]/gi;
+            const matches = [];
+            let match;
+            
+            while ((match = gifRegex.exec(htmlContent)) !== null) {
+                matches.push(match[0]);
+            }
+            
+            if (matches.length > 0) {
+                const previewSection = document.getElementById('previewSection');
+                const previewContent = document.getElementById('previewContent');
+                
+                previewContent.innerHTML = matches.map(match => 
+                    `<div class="highlight">${match}</div>`
+                ).join('');
+                
+                previewSection.style.display = 'block';
+            } else {
+                document.getElementById('previewSection').style.display = 'none';
+            }
+        }
+
+        function processExistingHTML() {
+            const htmlContent = document.getElementById('htmlInput').value;
+            if (!htmlContent.trim()) {
+                alert('Please paste or upload HTML content first!');
+                return;
+            }
+
+            const newPrefix = document.getElementById('newPrefixInput').value || '';
+            const defaultAlt = document.getElementById('defaultAltInput').value || 'GIF image';
+            const addLazyLoad = document.getElementById('addLazyLoadCheck').checked;
+            const replacePath = document.getElementById('replacePathCheck').checked;
+
+            // Process the HTML to find and modify GIF img tags
+            let processedHTML = htmlContent;
+            
+            // Regex to find img tags with GIF sources
+            const gifRegex = /<img([^>]*src=['"](.*\.gif)['"][^>]*)>/gi;
+            
+            processedHTML = processedHTML.replace(gifRegex, (match, attributes, originalSrc) => {
+                let newAttributes = attributes;
+                
+                // Handle URL prefix replacement
+                if (newPrefix) {
+                    if (replacePath) {
+                        // Replace the entire path with new prefix + filename
+                        const filename = originalSrc.split('/').pop();
+                        newAttributes = newAttributes.replace(
+                            /src=['"](.*\.gif)['"]/i,
+                            `src="${newPrefix}${filename}"`
+                        );
+                    } else {
+                        // Only add prefix if path doesn't already start with it
+                        if (!originalSrc.startsWith(newPrefix)) {
+                            newAttributes = newAttributes.replace(
+                                /src=['"](.*\.gif)['"]/i,
+                                `src="${newPrefix}$1"`
+                            );
+                        }
+                    }
+                }
+                
+                // Add lazy loading if not present
+                if (addLazyLoad && !newAttributes.includes('loading=')) {
+                    newAttributes += ' loading="lazy"';
+                }
+                
+                // Add alt text if not present
+                if (!newAttributes.includes('alt=')) {
+                    newAttributes += ` alt="${defaultAlt}"`;
+                }
+                
+                return `<img${newAttributes}>`;
+            });
+
+            document.getElementById('htmlOutput').textContent = processedHTML;
+            
+            // Show success message
+            const outputSection = document.querySelector('.html-output-section');
+            const existingMessage = outputSection.querySelector('.success, .error');
+            if (existingMessage) existingMessage.remove();
+            
+            const successMessage = document.createElement('div');
+            successMessage.className = 'success';
+            successMessage.textContent = `Successfully processed HTML! Found and updated ${(htmlContent.match(gifRegex) || []).length} GIF images.`;
+            outputSection.insertBefore(successMessage, document.getElementById('htmlOutput'));
+            
+            setTimeout(() => successMessage.remove(), 5000);
         }
 
         function copyToClipboard() {
-            outputTextarea.select();
-            document.execCommand('copy');
+            const htmlOutput = document.getElementById('htmlOutput');
+            const textToCopy = htmlOutput.textContent;
             
-            const copyBtn = document.querySelector('.copy-btn');
-            const originalText = copyBtn.textContent;
-            copyBtn.textContent = 'Copied!';
-            copyBtn.style.background = '#2ed573';
+            if (textToCopy === 'Upload GIFs or paste HTML code to generate output...') {
+                alert('No HTML code to copy! Generate some code first.');
+                return;
+            }
             
-            setTimeout(() => {
-                copyBtn.textContent = originalText;
-                copyBtn.style.background = '#2ed573';
-            }, 2000);
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = 'Copied!';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                alert('Failed to copy to clipboard. Please select and copy manually.');
+            });
         }
 
-        // Initialize
-        updateStats();
-        updateButtons();
+        // Auto-preview HTML content when typing
+        document.getElementById('htmlInput').addEventListener('input', function() {
+            previewHTMLContent(this.value);
+        });
     </script>
 </body>
 </html>
